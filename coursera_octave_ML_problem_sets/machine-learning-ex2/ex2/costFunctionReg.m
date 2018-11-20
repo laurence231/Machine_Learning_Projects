@@ -25,9 +25,13 @@ grad = zeros(size(theta));
 % =============================================================
 
 hypothesis = sigmoid(X*theta);
-J(1) = (1/m)*sum(-y(1).*log(hypothesis(1)) - (1-y(1)).*log(1-hypothesis(1)));
-J(2:end,:) = (1/m)*sum(-y(2:end,:).*log(hypothesis(2:end,:)) - (1-y(2:end,:)).*log(1-hypothesis(2:end,:))  + (lambda/(2*m))*sum(theta(2:end,:).^2));
-grad(1) = (1/m)*sum((hypothesis(1) - y(1)).*X(1));
-grad(2:end,:) = (1/m)*sum((hypothesis(2:end,:) - y(2:end,:)).*X(2:end,:)) + (lambda/m)*theta(2:end,:);
+J_start = (1/m)*sum(-y(1).*log(hypothesis(1)) - (1-y(1)).*log(1-hypothesis(1)));
+J_end = (1/m)*sum(-y(2:end,:).*log(hypothesis(2:end,:)) - (1-y(2:end,:)).*log(1-hypothesis(2:end,:))  + (lambda/(2*m))*sum(theta(2:end,:).^2));
+J = J_start + J_end
+
+
+grad0 = grad(1) + (1/m)*sum(X(1)'*(hypothesis - y));
+grad_2_end = (1/m)*(X'*((hypothesis - y))) + (lambda/m)*theta;
+grad = vertcat(grad0,grad_2_end(2:end,:));
 grad = grad(:);
 end
