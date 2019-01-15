@@ -10,7 +10,7 @@ def clean_data(search_term):
         g.write(content)
 
     with open('ecommerce_no_html.csv', 'a') as g:
-        g.write(" \n 501, \"%s\""%search_term)
+        g.write(" \nsearch, %s"%search_term)
 
 def train_TFIDF(ds):
     tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
@@ -34,15 +34,16 @@ def recommend(results, search_item,search_item_index, num):
     print("-------")
     recs = results[search_item_index][:num]
     print(recs)
-    for rec in recs:
-        print("Recommended: " + item(rec[1]) + " (score:" + str(rec[0]) + ")" + " " + ds.loc[ds['Title'] == rec[1]]['Description'])
-        print(" ")
-        print(" ")
+    # for rec in recs:
+    #     print("Recommended: " + item(rec[1]) + " (score:" + str(rec[0]) + ")" + " " + ds.loc[ds['Title'] == rec[1]]['Description'])
+    #     print(" ")
+    #     print(" ")
 
+colnames=['Title','Description']
 
-ds = pd.read_csv("ecommerce_no_html.csv")
-pd.options.display.max_colwidth = 1000
 search_term = input('Enter the term you wish to search for here: ', )
 clean_data(search_term)
+ds = pd.read_csv("ecommerce_no_html.csv", names=colnames)
+pd.options.display.max_colwidth = 10000
 trained_algorithm = train_TFIDF(ds)
-recommend(trained_algorithm, search_term,501, num=5)
+recommend(trained_algorithm, search_term,'search', num=5)
